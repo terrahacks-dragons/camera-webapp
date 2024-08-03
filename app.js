@@ -11,15 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function startCamera() {
       try {
-          // Stop any active video stream before starting a new one
           if (currentStream) {
               currentStream.getTracks().forEach(track => track.stop());
           }
 
-          // Define video constraints
           const constraints = {
               video: {
-                  facingMode: useFrontCamera ? 'user' : { exact: 'environment' } // Adjust facingMode handling
+                  facingMode: useFrontCamera ? 'user' : 'environment'
               }
           };
 
@@ -63,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
       uploadedImage.classList.add("active");
       video.classList.remove("active");
 
-      // Automatically download the captured image
       downloadImage(dataUrl, 'captured-image.jpg');
   });
 
@@ -71,7 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
   resetBtn.addEventListener("click", () => {
       uploadedImage.classList.remove("active");
       video.classList.add("active");
-      uploadInput.value = ''; // Clear the file input value
+      uploadInput.value = '';
+      startCamera();
   });
 
   // Flip camera
