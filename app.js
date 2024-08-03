@@ -10,23 +10,26 @@ document.addEventListener("DOMContentLoaded", () => {
   let useFrontCamera = true;
 
   async function startCamera() {
-      if (currentStream) {
-          currentStream.getTracks().forEach(track => track.stop());
-      }
-
-      const constraints = {
-          video: {
-              facingMode: useFrontCamera ? 'user' : 'environment'
-          }
-      };
-
       try {
+          // Stop any active video stream before starting a new one
+          if (currentStream) {
+              currentStream.getTracks().forEach(track => track.stop());
+          }
+
+          // Define video constraints
+          const constraints = {
+              video: {
+                  facingMode: useFrontCamera ? 'user' : { exact: 'environment' } // Adjust facingMode handling
+              }
+          };
+
           const stream = await navigator.mediaDevices.getUserMedia(constraints);
           currentStream = stream;
           video.srcObject = stream;
           video.classList.add("active");
       } catch (error) {
           console.error('Error accessing the camera: ', error);
+          alert('Error accessing the camera: ' + error.message);
       }
   }
 
@@ -47,6 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Capture photo from video
   captureBtn.addEventListener("click", () => {
+      if (!currentStream) return;
+
       const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
